@@ -20,7 +20,7 @@ environment {
                 echo "🐍 Creating virtual environment..."
                 sh '''
                     python3 -m venv ${VENV:-venv}
-                    source ${VENV:-venv}/bin/activate
+                    . ${VENV:-venv}/bin/activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
                 '''
