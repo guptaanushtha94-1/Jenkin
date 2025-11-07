@@ -1,7 +1,7 @@
 import pytest
 class Test_c1:
     def test_a4(self):
-        assert type(1)==int
+        assert type(10)==int
     def test_a5(self):
         assert type(1.3)==float
 
