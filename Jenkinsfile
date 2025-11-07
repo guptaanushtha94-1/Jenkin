@@ -18,6 +18,7 @@ environment {
                 echo "🐍 Creating virtual environment..."
                 sh '''
                     python3 -m venv ${VENV:-venv}
+                    chmod -R 755 venv
                     /var/lib/jenkins/workspace/declarative-pipeline/venv/bin/activate
                     pip install --upgrade pip
                 '''
