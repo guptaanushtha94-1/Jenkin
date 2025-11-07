@@ -31,7 +31,7 @@ environment {
             dir('/home/vvdn/PycharmProjects/PythonProject/pytestss') {
             sh '''
                 # Activate virtual environment inside project
-                source ${VENV}/bin/activate
+                . ${VENV}/bin/activate
 
                 # Run tests from correct directory
                 pytest tests/ \
