@@ -1,11 +1,12 @@
 pipeline {
     agent any
-environment {
-    REPORT_PATH = 'reports/report.html'
-}
+
+    environment {
+        REPORT_PATH = 'reports/report.html'
+        VENV = 'venv'
+    }
 
     stages {
-
         stage('Checkout Code') {
             steps {
                 echo "📦 Cloning repository..."
@@ -17,37 +18,37 @@ environment {
             steps {
                 echo "🐍 Creating virtual environment..."
                 sh '''
-                    python3 -m venv ${VENV:-venv}
-                    chmod -R 755 venv
-                    /var/lib/jenkins/workspace/declarative-pipeline/venv/bin/activate
-                    pip install --upgrade pip
+                    # Clean up any old venv
+                    rm -rf ${VENV}
+
+                    # Create new virtual environment
+                    python3 -m venv ${VENV}
+                    chmod -R 755 ${VENV}
+
+                    # Activate and install pip safely
+                    . ${VENV}/bin/activate
+                    pip install --upgrade pip --break-system-packages
+
+                    # Install dependencies if requirements.txt exists
+                    if [ -f requirements.txt ]; then
+                        pip install -r requirements.txt --break-system-packages
+                    fi
                 '''
             }
         }
 
-
         stage('Run API Tests') {
-    steps {
-        echo "🧪 Running pytest automation suite in project folder..."
-        dir('/home/vvdn/PycharmProjects/PythonProject/pytestss') {
-            sh '''
-                #!/bin/bash
-                # Activate virtual environment from Jenkins workspace
-                . ${WORKSPACE}/venv/bin/activate
-
-                echo "✅ Virtual environment activated at ${WORKSPACE}/venv"
-
-                # Optional: install dependencies if needed
-                pip install -r requirements.txt || true
-
-                # Run pytest and generate reports
-                pytest tests/ \
-                    --junitxml=reports/results.xml \
-                    --html=reports/report.html --self-contained-html
-            '''
+            steps {
+                echo "🧪 Running pytest automation suite..."
+                sh '''
+                    # Run tests using venv’s Python
+                    ${VENV}/bin/python -m pytest tests/ \
+                        --junitxml=reports/results.xml \
+                        --html=${REPORT_PATH} --self-contained-html
+                '''
+            }
         }
-    }
-}
+
         stage('Archive Test Reports') {
             steps {
                 echo "📊 Archiving test results..."
@@ -58,10 +59,10 @@ environment {
         }
     }
 
-        post {
+    post {
         always {
             echo "🧹 Cleaning up virtual environment..."
             sh 'rm -rf ${VENV} || true'
         }
-        }
+    }
 }
