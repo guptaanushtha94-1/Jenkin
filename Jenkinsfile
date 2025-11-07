@@ -42,7 +42,7 @@ pipeline {
                 echo "🧪 Running pytest automation suite..."
                 sh '''
                     # Run tests using venv’s Python
-                    ${VENV}/bin/python -m pytest tests/ \
+                    ${VENV}/bin/python -m pytest /home/vvdn/PycharmProjects/PythonProject/pytestss/ \
                         --junitxml=reports/results.xml \
                         --html=${REPORT_PATH} --self-contained-html
                 '''
