@@ -18,7 +18,7 @@ environment {
                 echo "🐍 Creating virtual environment..."
                 sh '''
                     python3 -m venv ${VENV:-venv}
-                    . venv/bin/activate
+                    /var/lib/jenkins/workspace/declarative-pipeline/venv/bin/activate
                     pip install --upgrade pip
                 '''
             }
@@ -26,22 +26,27 @@ environment {
 
 
         stage('Run API Tests') {
-          steps {
-            echo "🧪 Running pytest automation suite in project folder..."
-            dir('/home/vvdn/PycharmProjects/PythonProject/pytestss') {
+    steps {
+        echo "🧪 Running pytest automation suite in project folder..."
+        dir('/home/vvdn/PycharmProjects/PythonProject/pytestss') {
             sh '''
-                # Activate virtual environment inside project
-                . venv/bin/activate
+                #!/bin/bash
+                # Activate virtual environment from Jenkins workspace
+                . ${WORKSPACE}/venv/bin/activate
 
-                # Run tests from correct directory
+                echo "✅ Virtual environment activated at ${WORKSPACE}/venv"
+
+                # Optional: install dependencies if needed
+                pip install -r requirements.txt || true
+
+                # Run pytest and generate reports
                 pytest tests/ \
                     --junitxml=reports/results.xml \
-                    --html=${REPORT_PATH} --self-contained-html
+                    --html=reports/report.html --self-contained-html
             '''
         }
     }
 }
-
         stage('Archive Test Reports') {
             steps {
                 echo "📊 Archiving test results..."
