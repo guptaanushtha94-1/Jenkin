@@ -1,5 +1,10 @@
 pipeline {
     agent any
+environment {
+    VENV = 'venv'
+    TEST_ENV = 'staging'
+    REPORT_PATH = 'reports/report.html'
+}
 
     stages {
 
@@ -14,8 +19,8 @@ pipeline {
             steps {
                 echo "🐍 Creating virtual environment..."
                 sh '''
-                    python3 -m venv ${VENV}
-                    source ${VENV}/bin/activate
+                    python3 -m venv ${VENV:-venv}
+                    source ${VENV:-venv}/bin/activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
                 '''
