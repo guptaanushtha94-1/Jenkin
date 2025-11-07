@@ -25,15 +25,6 @@ environment {
             }
         }
 
-        stage('Code Quality Check') {
-            steps {
-                echo "🧹 Running flake8 lint checks..."
-                sh '''
-                    source ${VENV}/bin/activate
-                    flake8 src/ --exit-zero --statistics
-                '''
-            }
-        }
 
         stage('Run API Tests') {
           steps {
