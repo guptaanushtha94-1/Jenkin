@@ -1,7 +1,6 @@
 pipeline {
     agent any
 environment {
-    TEST_ENV = 'staging'
     REPORT_PATH = 'reports/report.html'
 }
 
@@ -35,7 +34,7 @@ environment {
                 source ${VENV}/bin/activate
 
                 # Run tests from correct directory
-                pytest tests/ --env=${TEST_ENV} \
+                pytest tests/ \
                     --junitxml=reports/results.xml \
                     --html=${REPORT_PATH} --self-contained-html
             '''
